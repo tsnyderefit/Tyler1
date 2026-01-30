@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check-In - Queue System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎫 Check-In</h1>
+      <p class="subtitle">Please enter your name to join the queue</p>
+    </header>
+
+    <main>
+      <form id="checkin-form">
+        <div class="form-group">
+          <label for="patron-name">Your Name</label>
+          <input
+            type="text"
+            id="patron-name"
+            name="patronName"
+            placeholder="Enter your name"
+            required
+            autocomplete="name"
+            autofocus
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Check In
+        </button>
+      </form>
+
+      <div id="message" class="message hidden"></div>
+    </main>
+
+    <footer>
+      <nav>
+        <a href="/staff.html">Staff Interface</a>
+        <a href="/analytics.html">Analytics</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="patron.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "checkin-queue-system",
+  "version": "1.0.0",
+  "description": "Check-in queue system with patron check-in, staff management, and analytics",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["queue", "checkin", "management"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "ws": "^8.14.2"
+  }
+}

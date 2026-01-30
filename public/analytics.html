@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics - Queue System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 Queue Analytics</h1>
+      <div class="controls">
+        <label for="days-select">Time Period:</label>
+        <select id="days-select">
+          <option value="1">Last 24 hours</option>
+          <option value="7" selected>Last 7 days</option>
+          <option value="30">Last 30 days</option>
+          <option value="90">Last 90 days</option>
+        </select>
+        <button id="refresh-btn" class="btn btn-secondary">🔄 Refresh</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="loading" class="loading">
+        <p>Loading analytics...</p>
+      </div>
+
+      <div id="analytics-content" class="analytics-content hidden">
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Total Check-Ins</div>
+            <div class="metric-value" id="total-checkins">0</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label">Average Wait Time</div>
+            <div class="metric-value" id="avg-wait-time">0m</div>
+          </div>
+        </div>
+
+        <!-- Peak Hours -->
+        <section class="analytics-section">
+          <h2>🕐 Peak Hours</h2>
+          <div id="peak-hours" class="peak-hours-list">
+            <p class="empty-message">No data available</p>
+          </div>
+        </section>
+
+        <!-- Daily Statistics -->
+        <section class="analytics-section">
+          <h2>📅 Daily Breakdown</h2>
+          <div id="daily-stats" class="daily-stats-table">
+            <p class="empty-message">No data available</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <nav>
+        <a href="/">Patron Check-In</a>
+        <a href="/staff.html">Staff Interface</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="analytics.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff - Queue Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>👥 Staff Queue Management</h1>
+      <div class="status-bar">
+        <span id="connection-status" class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">Connecting...</span>
+        </span>
+        <span id="queue-count" class="queue-count">0 in queue</span>
+      </div>
+    </header>
+
+    <main>
+      <div id="queue-container">
+        <div id="empty-state" class="empty-state">
+          <p>🎉 No patrons in queue</p>
+          <small>New check-ins will appear here automatically</small>
+        </div>
+
+        <div id="queue-list" class="queue-list hidden"></div>
+      </div>
+
+      <div id="notification" class="notification hidden">
+        <span class="notification-icon">🔔</span>
+        <span class="notification-text">New patron checked in!</span>
+      </div>
+    </main>
+
+    <footer>
+      <nav>
+        <a href="/">Patron Check-In</a>
+        <a href="/analytics.html">Analytics</a>
+      </nav>
+    </footer>
+  </div>
+
+  <audio id="notification-sound" preload="auto">
+    <!-- Using a data URI for a simple notification beep -->
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjGJ0fPTgjMGHm7A7+OZUQ0PVqzn77BdGAg+ldfzzn0pBSd+zPLaizsKF2W57OihUREMTKXh8bllHAU2jtHz0H8rBSp6yPHajkMKGGS37OSaUg0QVqvl8LNfGgk7ltb0zoEtBSR4x/HalUQLF2S67eSZUw0PVqzk8bJfGgg7l9b0z4IuBSV4yPDalEQMGGO47eSZUQwPVqvl8LNfGgg6l9b0z4EtBSR4yPHalEQMF2O47OSaUg0PVqzl8LNfGgg7l9b0z4EuBSR4x/HalEQMGGO47OSaUg0PVqvl8LNfGgg6l9b0z4EuBSR4x/HalEQMGGO47OSZUg0PVqzl8LNfGgg6l9b0z4EuBSR4yPHalEQMGGO47OSZUg0PVqvl8LNfGgg6l9b0z4EuBSR4x/HalEQMF2S47OSZUg0PVqzl8LNfGgg6l9b0z4EuBSR4x/HalEQMGGS47OSZUg0PVqzl8LNfGgg6l9b0z4EuBSR4x/HalEQMGGO47eWZUg0PVqzl8LNfGgg6l9b0z4EuBSR4x/HalEQMGGO47OSZUg0PVqzl8LNfGgg6l9b0z4EtBSR4x/HalEQMGGO47OSZUg0PVqvl8LNfGgg6l9b0z4EtBSR4yPHalEQMGGO47OSZUg0PVqzl8LNfGgg6l9b0z4EtBSR4yPHalEQMGGO47OSZUg0PVqzl8LNfGgg6l9b0z4EtBSR4yPHalEQMGGO47OSZUg0PVqzl8LNfGgg6l9b0z4EtBSR4yPHalEQMGGO47OSZUg0PVqvl8LNfGgg6l9b0z4EtBSR4yPHalEQMGGO47OSZUg0PVqzl8LNfGgg6l9b0z4EtBSR4x/HalEQMGGS47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4x/HalEQMGGS47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4x/HalEQMGGS47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4yPHalEQMGGS47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4x/HalEQMGGO47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4x/HalEQMGGO47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4x/HalEQMGGO47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4x/HalEQMGGO47OSZUg0PVqzl8LNfGgg6ltb0z4EtBSN4x/HalEQMGGO47OSZUg0PVqzl8LNfGgg6ltb0z4E=" type="audio/wav">
+  </audio>
+
+  <script src="staff.js"></script>
+</body>
+</html>
