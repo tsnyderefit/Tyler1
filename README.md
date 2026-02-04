@@ -78,24 +78,76 @@ pm2 logs checkin-queue
 pm2 monit
 ```
 
-### 5. Configure Firewall
+### 5. Configure Nginx Reverse Proxy (Recommended)
 
-Open port 3000 (or your configured port):
+Install and configure nginx for production deployment:
 
 ```bash
-# Ubuntu/Debian (UFW)
-sudo ufw allow 3000/tcp
+# Install nginx
+sudo apt install nginx -y
 
-# RHEL/CentOS (firewalld)
-sudo firewall-cmd --permanent --add-port=3000/tcp
-sudo firewall-cmd --reload
+# Create nginx configuration
+sudo nano /etc/nginx/sites-available/yourdomain.com
 ```
 
-### 6. Access the Application
+Add this configuration:
 
-- **Patron Check-In**: `http://your-server-ip:3000`
-- **Staff Interface**: `http://your-server-ip:3000/staff.html`
-- **Analytics**: `http://your-server-ip:3000/analytics.html`
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+
+        # WebSocket support
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+
+        # Standard proxy headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+Enable the site:
+
+```bash
+# Remove default site and enable new configuration
+sudo rm /etc/nginx/sites-enabled/default
+sudo ln -s /etc/nginx/sites-available/yourdomain.com /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### 6. Configure Firewall
+
+```bash
+# Allow HTTP traffic (nginx will proxy to the app)
+sudo ufw allow 80/tcp
+
+# Optionally allow HTTPS for SSL
+sudo ufw allow 443/tcp
+
+# Port 3000 should NOT be opened - nginx proxies internally
+```
+
+### 7. Access the Application
+
+With nginx configured, access via your domain:
+
+- **Patron Check-In**: `http://yourdomain.com`
+- **Staff Interface**: `http://yourdomain.com/staff.html`
+- **Analytics**: `http://yourdomain.com/analytics.html`
+
+For development/testing without nginx:
+- `http://your-server-ip:3000`
 
 ## Configuration
 
@@ -113,25 +165,22 @@ Or create a `.env` file:
 PORT=8080
 ```
 
-### Reverse Proxy (Nginx)
+### SSL/HTTPS Setup (Optional but Recommended)
 
-For production deployment with domain name:
+Secure your application with Let's Encrypt SSL certificate:
 
-```nginx
-server {
-    listen 80;
-    server_name yourdomain.com;
+```bash
+# Install certbot
+sudo apt install certbot python3-certbot-nginx -y
 
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
+# Obtain and install SSL certificate
+sudo certbot --nginx -d yourdomain.com
+
+# Certbot will automatically configure nginx for HTTPS
+# Certificates auto-renew via systemd timer
 ```
+
+After SSL setup, your application will be available at `https://yourdomain.com`
 
 ## Database
 
