@@ -152,12 +152,16 @@ function renderQueue(queue) {
   queueList.innerHTML = queue.map((patron, index) => {
     const waitMinutes = Math.floor(patron.waitTime / 60);
     const waitSeconds = patron.waitTime % 60;
+    const pastDueButton = patron.pastDue
+      ? `<button class="btn btn-past-due" onclick="clearPastDue(${patron.id}); event.stopPropagation();">Past Due</button>`
+      : '';
 
     return `
       <div class="queue-item" data-id="${patron.id}">
         <div class="queue-item-header">
           <span class="queue-position">#${index + 1}</span>
           <span class="patron-name">${escapeHtml(patron.patronName)}</span>
+          ${pastDueButton}
         </div>
         <div class="queue-item-info">
           <span class="check-in-time">${formatTime(patron.checkInTime)}</span>
@@ -209,6 +213,23 @@ async function completeCheckIn(id) {
     // Queue update will come via WebSocket
   } catch (error) {
     console.error('Error completing check-in:', error);
+    alert('Network error. Please try again.');
+  }
+}
+
+async function clearPastDue(id) {
+  try {
+    const response = await fetch(`/api/clear-pastdue/${id}`, {
+      method: 'POST'
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(`Error: ${error.error || 'Failed to clear past due'}`);
+    }
+    // Queue update will come via WebSocket
+  } catch (error) {
+    console.error('Error clearing past due:', error);
     alert('Network error. Please try again.');
   }
 }

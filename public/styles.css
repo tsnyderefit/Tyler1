@@ -173,6 +173,19 @@ main {
   background: #059669;
 }
 
+.btn-past-due {
+  background: var(--error-color);
+  color: white;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.btn-past-due:hover {
+  background: #dc2626;
+}
+
 /* Messages */
 .message {
   padding: 16px;

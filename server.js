@@ -75,7 +75,8 @@ app.post('/api/checkin', async (req, res) => {
         id: result.id,
         patronName: patronName.trim(),
         checkInTime: Date.now(),
-        waitTime: 0
+        waitTime: 0,
+        pastDue: result.pastDue
       }
     });
 
@@ -127,6 +128,35 @@ app.post('/api/complete/:id', async (req, res) => {
   } catch (error) {
     console.error('Error completing check-in:', error);
     res.status(500).json({ error: 'Failed to complete check-in' });
+  }
+});
+
+// POST /api/clear-pastdue/:id - Clear past due status
+app.post('/api/clear-pastdue/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid ID' });
+    }
+
+    const result = await db.clearPastDue(id);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Check-in not found' });
+    }
+
+    // Get updated queue and broadcast
+    const queue = await db.getQueue();
+    broadcastToStaff({
+      type: 'queue-update',
+      data: queue
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error clearing past due:', error);
+    res.status(500).json({ error: 'Failed to clear past due' });
   }
 });
 

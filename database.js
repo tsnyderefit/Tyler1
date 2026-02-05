@@ -13,21 +13,30 @@ db.serialize(() => {
       check_in_time INTEGER NOT NULL,
       status TEXT NOT NULL CHECK(status IN ('waiting', 'completed')),
       completed_time INTEGER,
-      wait_time_seconds INTEGER
+      wait_time_seconds INTEGER,
+      past_due INTEGER DEFAULT 0
     )
   `);
 
   db.run(`CREATE INDEX IF NOT EXISTS idx_status ON check_ins(status)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_check_in_time ON check_ins(check_in_time)`);
+
+  // Add past_due column to existing tables (migration)
+  db.run(`ALTER TABLE check_ins ADD COLUMN past_due INTEGER DEFAULT 0`, (err) => {
+    // Ignore error if column already exists
+  });
 });
 
 // Add a new patron to the queue
 function addCheckIn(patronName) {
   return new Promise((resolve, reject) => {
     const checkInTime = Date.now();
+    // Randomly assign past_due status (50% chance)
+    const pastDue = Math.random() < 0.5 ? 1 : 0;
+
     db.run(
-      'INSERT INTO check_ins (patron_name, check_in_time, status) VALUES (?, ?, ?)',
-      [patronName, checkInTime, 'waiting'],
+      'INSERT INTO check_ins (patron_name, check_in_time, status, past_due) VALUES (?, ?, ?, ?)',
+      [patronName, checkInTime, 'waiting', pastDue],
       function(err) {
         if (err) {
           reject(err);
@@ -38,7 +47,7 @@ function addCheckIn(patronName) {
             ['waiting', checkInTime],
             (err, row) => {
               if (err) reject(err);
-              else resolve({ id: this.lastID, position: row.position });
+              else resolve({ id: this.lastID, position: row.position, pastDue: pastDue === 1 });
             }
           );
         }
@@ -51,7 +60,7 @@ function addCheckIn(patronName) {
 function getQueue() {
   return new Promise((resolve, reject) => {
     db.all(
-      'SELECT id, patron_name, check_in_time FROM check_ins WHERE status = ? ORDER BY check_in_time ASC',
+      'SELECT id, patron_name, check_in_time, past_due FROM check_ins WHERE status = ? ORDER BY check_in_time ASC',
       ['waiting'],
       (err, rows) => {
         if (err) {
@@ -63,7 +72,8 @@ function getQueue() {
             id: row.id,
             patronName: row.patron_name,
             checkInTime: row.check_in_time,
-            waitTime: Math.floor((now - row.check_in_time) / 1000) // in seconds
+            waitTime: Math.floor((now - row.check_in_time) / 1000), // in seconds
+            pastDue: row.past_due === 1
           }));
           resolve(queue);
         }
@@ -169,9 +179,27 @@ function getAnalytics(days = 7) {
   });
 }
 
+// Clear past due status
+function clearPastDue(id) {
+  return new Promise((resolve, reject) => {
+    db.run(
+      'UPDATE check_ins SET past_due = 0 WHERE id = ?',
+      [id],
+      function(err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ success: true, changes: this.changes });
+        }
+      }
+    );
+  });
+}
+
 module.exports = {
   addCheckIn,
   getQueue,
   completeCheckIn,
-  getAnalytics
+  getAnalytics,
+  clearPastDue
 };
