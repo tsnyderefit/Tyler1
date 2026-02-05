@@ -327,12 +327,25 @@ main {
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.patron-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
 }
 
 .patron-name {
   font-size: 1.1rem;
   font-weight: 600;
-  flex: 1;
+}
+
+.account-number {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .queue-item-info {

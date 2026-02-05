@@ -76,7 +76,8 @@ app.post('/api/checkin', async (req, res) => {
         patronName: patronName.trim(),
         checkInTime: Date.now(),
         waitTime: 0,
-        pastDue: result.pastDue
+        pastDue: result.pastDue,
+        accountNumber: result.accountNumber
       }
     });
 

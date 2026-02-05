@@ -165,7 +165,10 @@ function renderQueue(queue) {
         <div class="queue-item-content">
           <div class="queue-item-header">
             <span class="queue-position">#${index + 1}</span>
-            <span class="patron-name">${escapeHtml(patron.patronName)}</span>
+            <div class="patron-info">
+              <span class="patron-name">${escapeHtml(patron.patronName)}</span>
+              <span class="account-number">${patron.accountNumber || 'N/A'}</span>
+            </div>
             ${pastDueButton}
           </div>
           <div class="queue-item-info">
