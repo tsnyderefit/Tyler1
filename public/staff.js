@@ -156,18 +156,24 @@ function renderQueue(queue) {
       ? `<button class="btn btn-past-due" onclick="clearPastDue(${patron.id}); event.stopPropagation();">Past Due</button>`
       : '';
 
+    // Generic user silhouette SVG
+    const profilePicture = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzlDQTNBRiI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==';
+
     return `
       <div class="queue-item" data-id="${patron.id}">
-        <div class="queue-item-header">
-          <span class="queue-position">#${index + 1}</span>
-          <span class="patron-name">${escapeHtml(patron.patronName)}</span>
-          ${pastDueButton}
-        </div>
-        <div class="queue-item-info">
-          <span class="check-in-time">${formatTime(patron.checkInTime)}</span>
-          <span class="wait-time" id="wait-time-${patron.id}">
-            ${waitMinutes}m ${waitSeconds}s
-          </span>
+        <img src="${profilePicture}" alt="Profile" class="profile-picture">
+        <div class="queue-item-content">
+          <div class="queue-item-header">
+            <span class="queue-position">#${index + 1}</span>
+            <span class="patron-name">${escapeHtml(patron.patronName)}</span>
+            ${pastDueButton}
+          </div>
+          <div class="queue-item-info">
+            <span class="check-in-time">${formatTime(patron.checkInTime)}</span>
+            <span class="wait-time" id="wait-time-${patron.id}">
+              ${waitMinutes}m ${waitSeconds}s
+            </span>
+          </div>
         </div>
         <button class="btn btn-complete" onclick="completeCheckIn(${patron.id})">
           ✓ Complete
