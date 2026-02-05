@@ -17,7 +17,7 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       patron_name TEXT NOT NULL,
       check_in_time INTEGER NOT NULL,
-      status TEXT NOT NULL CHECK(status IN ('waiting', 'completed')),
+      status TEXT NOT NULL CHECK(status IN ('waiting', 'completed', 'cancelled')),
       completed_time INTEGER,
       wait_time_seconds INTEGER,
       past_due INTEGER DEFAULT 0,
@@ -221,10 +221,28 @@ function clearPastDue(id) {
   });
 }
 
+// Cancel a check-in (remove from queue)
+function cancelCheckIn(id) {
+  return new Promise((resolve, reject) => {
+    db.run(
+      'UPDATE check_ins SET status = ? WHERE id = ? AND status = ?',
+      ['cancelled', id, 'waiting'],
+      function(err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ success: true, changes: this.changes });
+        }
+      }
+    );
+  });
+}
+
 module.exports = {
   addCheckIn,
   getQueue,
   completeCheckIn,
   getAnalytics,
-  clearPastDue
+  clearPastDue,
+  cancelCheckIn
 };

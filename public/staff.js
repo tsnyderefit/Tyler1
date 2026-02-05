@@ -178,9 +178,14 @@ function renderQueue(queue) {
             </span>
           </div>
         </div>
-        <button class="btn btn-complete" onclick="completeCheckIn(${patron.id})">
-          ✓ Complete
-        </button>
+        <div class="queue-item-actions">
+          <button class="btn btn-complete" onclick="confirmComplete(${patron.id}, '${escapeHtml(patron.patronName)}')">
+            ✓ Complete
+          </button>
+          <button class="btn btn-cancel" onclick="confirmCancel(${patron.id}, '${escapeHtml(patron.patronName)}')">
+            ✕ Cancel
+          </button>
+        </div>
       </div>
     `;
   }).join('');
@@ -209,6 +214,18 @@ function updateWaitTime(patronId, checkInTime) {
   waitTimeElement.textContent = `${minutes}m ${seconds}s`;
 }
 
+function confirmComplete(id, patronName) {
+  if (confirm(`Complete check-in for ${patronName}?`)) {
+    completeCheckIn(id);
+  }
+}
+
+function confirmCancel(id, patronName) {
+  if (confirm(`Cancel check-in for ${patronName}?`)) {
+    cancelCheckIn(id);
+  }
+}
+
 async function completeCheckIn(id) {
   try {
     const response = await fetch(`/api/complete/${id}`, {
@@ -222,6 +239,23 @@ async function completeCheckIn(id) {
     // Queue update will come via WebSocket
   } catch (error) {
     console.error('Error completing check-in:', error);
+    alert('Network error. Please try again.');
+  }
+}
+
+async function cancelCheckIn(id) {
+  try {
+    const response = await fetch(`/api/cancel/${id}`, {
+      method: 'POST'
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert(`Error: ${error.error || 'Failed to cancel check-in'}`);
+    }
+    // Queue update will come via WebSocket
+  } catch (error) {
+    console.error('Error cancelling check-in:', error);
     alert('Network error. Please try again.');
   }
 }

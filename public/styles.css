@@ -186,6 +186,24 @@ main {
   background: #dc2626;
 }
 
+.btn-cancel {
+  background: #6b7280;
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+.btn-cancel:hover {
+  background: #4b5563;
+}
+
+.queue-item-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 /* Messages */
 .message {
   padding: 16px;
@@ -586,6 +604,14 @@ footer nav a:hover {
 
   .queue-item-header {
     flex-wrap: wrap;
+  }
+
+  .queue-item-actions {
+    width: 100%;
+  }
+
+  .queue-item-actions .btn {
+    width: 100%;
   }
 
   .notification {

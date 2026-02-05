@@ -161,6 +161,35 @@ app.post('/api/clear-pastdue/:id', async (req, res) => {
   }
 });
 
+// POST /api/cancel/:id - Cancel a check-in
+app.post('/api/cancel/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid ID' });
+    }
+
+    const result = await db.cancelCheckIn(id);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Check-in not found' });
+    }
+
+    // Get updated queue and broadcast
+    const queue = await db.getQueue();
+    broadcastToStaff({
+      type: 'queue-update',
+      data: queue
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error cancelling check-in:', error);
+    res.status(500).json({ error: 'Failed to cancel check-in' });
+  }
+});
+
 // GET /api/analytics - Get analytics data
 app.get('/api/analytics', async (req, res) => {
   try {
